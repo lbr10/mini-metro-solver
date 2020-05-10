@@ -144,6 +144,26 @@ class Network:
                         G[s.idt + n * line1].append(s.idt + n * line2, self.lines[line2].waitingTime(self))
 
         return G
+    
+    def plot(self):
+
+        shapeList = ["s", "^", "o", "p", "P", "*", "d"]
+
+        for line in self.lines:
+            X = [self.stations[i].loc[0] for i in line.route]
+            Y = [self.stations[i].loc[1] for i in line.route]
+            X.append(X[0])
+            Y.append(Y[0])
+            plt.plot(X, Y, linewidth=2)
+        
+        for station in self.stations:
+            (x,y) = station.loc
+            plt.scatter(x, y, s=64, c='black', marker=shapeList[station.shape])
+        
+        plt.axis('equal')
+        plt.show()
+
+
 
 
 
