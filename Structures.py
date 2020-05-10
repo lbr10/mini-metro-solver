@@ -56,10 +56,11 @@ class Passenger:
 
 class Station:
 
-    '''A Station object represents a metro station. It is defined by its id, its shape, its capacity, its spawn rate of passengers, the lines that go through this station and the passengers currently waiting at the station. sp gives the different rates of spawning of shapes. The variable time increases 1 at a time to spTime and then returns to 0, and a randomm passenger is created then. If there are more passengers waiting than the capacity allowed, the variable overloadtime increases, and decreases to 0 otherwise.'''
+    '''A Station object represents a metro station. It is defined by its id, its shape, its capacity, its spawn rate of passengers, the lines that go through this station and the passengers currently waiting at the station. sp gives the different rates of spawning of shapes. The variable time increases 1 at a time to spTime and then returns to 0, and a random passenger is created then. If there are more passengers waiting than the capacity allowed, the variable overloadtime increases, and decreases to 0 otherwise.'''
 
-    def __init__(self, idt, shape, waiting, lines, spRate, spTime=100, capacity=8):
+    def __init__(self, idt, shape, waiting, lines, spRate, loc=None, spTime=100, capacity=8):
         self.idt = idt
+        self.loc = loc
         self.shape = shape
         self.waiting = waiting
         self.time = 0
@@ -205,7 +206,7 @@ class Train:
     def fill(self, station):
         i = 0
         stillWaiting = []
-        while i < len(station.waiting) and self.capacity >= len(self.passengers):
+        while i < len(station.waiting) and self.capacity > len(self.passengers):
             passenger = station.waiting[i]
             if passenger.route[-1][0] == self.line:
                 self.passengers.append(passenger)
@@ -213,24 +214,6 @@ class Train:
                 stillWaiting.append(passenger)
             i += 1
         station.waiting = stillWaiting
-
-
-
-
-p = Passenger(0, [(0, 0)])
-            
-s0 = Station(0, 0, [], [0], [(0, 0), (1, 0.5), (2, 0.5)], spTime=8)
-s1 = Station(1, 1, [p], [0], [(0, 0.5), (1, 0), (2, 0.5)], spTime=8)
-s2 = Station(2, 2, [], [0], [(0, 0.5), (1, 0.5), (2, 0)], spTime=8)
-s3 = Station(3, 2, [], [0], [(0, 0.5), (1, 0.5), (2, 0)], spTime=8)
-
-t = Train(0, 0, 0, [], 6)
-
-l = Line(0, [0,1,2,3], [t])
-
-d = [[0,10,15,10], [10, 0, 10, 15], [15, 10, 0, 10], [10, 15, 10, 0]]
-
-n = Network([s0, s1, s2, s3], d, [l])
 
 
     

@@ -19,7 +19,7 @@ def randomStation(idt, loc, nbShapes, spTimeRange, capacityRange, spRate=None):
     capacity = rnd.randint(capacityRange[0], capacityRange[1])
     if spRate is None:
         spRate = randomRate(nbShapes, shape)
-    return Station(idt, shape, [], [], spRate, spTime, capacity)
+    return Station(idt, shape, [], [], spRate, loc, spTime, capacity)
 
 
 def buildDistances(locations, dist):
