@@ -162,6 +162,17 @@ class Network:
         
         plt.axis('equal')
         plt.show()
+    
+    def addLine(self, line):
+        self.lines.append(line)
+        self.graph = self.createGraph()
+    
+    def addStation(self, station):
+        self.stations.append(station)
+        self.graph = self.createGraph()
+    
+    def addTrain(self, train):
+        self.lines[train.line].trains.append(train)
 
 
 
