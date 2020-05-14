@@ -37,7 +37,7 @@ def randomEmptyNetwork(nbShapes, nbStations, locations=None, spTimeRanges=None, 
     if locations is None:
         locations = [randomLoc() for _ in range(nbStations)]
     if spTimeRanges is None:
-        spTimeRanges = [[6, 10] for _ in range(nbStations)]
+        spTimeRanges = [[25, 30] for _ in range(nbStations)]
     if capacityRanges is None:
         capacityRanges = [[8, 8] for _ in range(nbStations)]
     if spRates is None:
@@ -47,7 +47,7 @@ def randomEmptyNetwork(nbShapes, nbStations, locations=None, spTimeRanges=None, 
         station = randomStation(i, locations[i], nbShapes, spTimeRanges[i], capacityRanges[i], spRates[i])
         stations.append(station)
     distances = buildDistances(locations, dist)
-    return Network(stations, distances, [])
+    return Network(stations, distances, [], [k for k in range(nbShapes)])
 
 
 

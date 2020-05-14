@@ -103,7 +103,8 @@ class Network:
 
     '''A Map object is a graph representing a metro network. It is given by the list of its vertex, that are the stations, an array of the times it costs to travel between any pair of stations (integer) and the metro lines currently working.'''
 
-    def __init__(self, stations, distances, lines):
+    def __init__(self, stations, distances, lines, shapes):
+        self.shapes = shapes
         self.stations = stations
         self.distances = distances
         self.lines = lines
