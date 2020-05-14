@@ -183,12 +183,14 @@ class Network:
 
 class Line:
 
-    '''A Line object represents a metro line. It is defined by an unique number, the list of stations on this line (which is ALWAYS CYCLIC) and the list of trains on this line. '''
+    '''A Line object represents a metro line. It is defined by an unique number, the list of stations on this line (which can be cyclic) and the list of trains on this line. The direct parameter indicates if the train is following the route in the left -> right order or in the opposite order.'''
 
-    def __init__(self, nb, route, trains):
+    def __init__(self, nb, route, trains, cyclic=True, direct=True):
         self.nb = nb
         self.route = route
         self.trains = trains
+        self.cyclic = cyclic
+        self.direct = direct
     
     def nextState(self, dist, stations):
         for train in self.trains:
@@ -196,7 +198,14 @@ class Line:
                 train.nextTime -= 1
             else:
                 station = stations[self.route[train.nextDest]]
-                train.nextDest = (train.nextDest + 1) % len(self.route)
+                if not self.cyclic and train.nextDest == len(self.route) - 1:
+                    self.direct = False
+                elif not self.cyclic and train.nextDest == 0:
+                    self.direct = True
+                if self.direct:
+                    train.nextDest = (train.nextDest + 1) % len(self.route)
+                else:
+                    train.nextDest = (train.nextDest + 1) % len(self.route)
                 nextStation = stations[self.route[train.nextDest]]
                 train.nextTime = dist[station.idt][nextStation.idt]
                 train.empty(station)
