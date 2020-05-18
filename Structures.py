@@ -5,47 +5,64 @@ from PriorityQueue import PriorityQueue
 
 
 
+def computeGuides(station, network):
+
+    guides = []
+        
+    G = network.graph
+    start = station.idt
+    n = len(network.stations)
+    p = len(network.lines)
+
+    spanningForest = [None for _ in range(n * p)]
+    dejaVu = [False for _ in range(n * p)]
+    U = PriorityQueue(len(G))
+    closer = [None for _ in network.shapes]
+
+    for i in range(p):
+        U.push(start + n * i, 0)
+    
+    while U.length() != 0 and len([x for x in closer if x is None]) != 0:
+        
+        (u, k) = U.pop()
+        if dejaVu[u]:
+            continue
+        else:
+            
+            for i in range(len(network.shapes)):
+                if closer[i] is None and network.stations[u % n].shape == network.shapes[i]:
+                    closer[i] = u % n
+            dejaVu[u] = True
+            for (v, w) in G[u]:
+                
+                if - U.priority(v) > - k + w:
+                    
+                    U.changePrio(v, - k + w)
+                    spanningForest[v] = u
+    
+    for i in range(len(network.shapes)):
+        route = []
+        goal = closer[i]
+        while not (goal is None or goal % n == station.idt) and len(route) < n:
+            route.append((goal // n, goal % n))
+            goal = spanningForest[goal]
+        guides.append(route)
+
+    return guides
+
+
+
 class Passenger:
 
-    '''A Passenger object represents an user of the metro network. It is described by the shape of its destination and the route that it is planning to use. The route is given by a pile of tuples (line number, goal). '''
+    '''A Passenger object represents an user of the metro network. It is described by the shape number of its destination and the route that it is planning to use. The route is given by a pile of tuples (line number, goal). '''
 
-    def __init__(self, shape, route=[]):
+    def __init__(self, shape, shapeNb, route=[]):
         self.shape = shape
+        self.shapeNb = shapeNb
         self.route = route
     
-    def computeRoute(self, station, network):
-        G = network.graph
-        start = station.idt
-        goal = self.shape
-        n = len(network.stations)
-        p = len(network.lines)
-        spanningforest = [None for _ in range(n * p)]
-        deja_vu = [False for _ in range(n * p)]
-        U = PriorityQueue(len(G) * len(G[0]))
-
-        for i in range(p):
-            U.push(start + n * i, - float('inf'))
-            deja_vu[start + n * i] = True
-        
-        while U.length() != 0:
-            (u, k) = U.pop()
-            if deja_vu[u]:
-                continue
-            elif network.stations[u % n].shape == goal:
-                goal = u
-            else:
-                deja_vu[u] = True
-                for (v, w) in G[u]:
-                    if - U.priority(v) > - k + w:
-                        U.changePrio(v, - k + w)
-                        spanningforest[v] = u
-        
-        route = []
-        while goal != None:
-            route.append((goal // n, goal % n))
-            goal = spanningforest[goal]
-
-        self.route = route
+    def computeRoute(self, station):
+        self.route = station.guides[self.shapeNb]
 
         
 
@@ -70,6 +87,10 @@ class Station:
         self.overloadTime = 0
         self.lines = lines
         self.transported = 0
+        self.guides = []
+    
+    def updateGuides(self, network):
+        self.guides = computeGuides(self, network)
     
     def upCrowded(self, network):
         if self.overloadTime >= 100:
@@ -85,10 +106,11 @@ class Station:
     def spawn(self, network):
         if self.time == self.spTime:
             r = rnd.random()
-            for (shape, ratio) in self.spRate:
+            for i in range(len(self.spRate)):
+                (shape, ratio) = self.spRate[i]
                 if r < ratio:
-                    passenger = Passenger(shape)
-                    passenger.computeRoute(self, network)
+                    passenger = Passenger(shape, i)
+                    passenger.computeRoute(self)
                     self.waiting.append(passenger)
                     break
                 elif r >= ratio:
