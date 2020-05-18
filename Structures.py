@@ -146,7 +146,7 @@ class Network:
 
         return G
     
-    def plot(self):
+    def plot(self, show=True):
 
         shapeList = ["s", "^", "o", "p", "P", "*", "d"]
 
@@ -162,7 +162,8 @@ class Network:
             plt.scatter(x, y, s=64, c='black', marker=shapeList[station.shape])
         
         plt.axis('equal')
-        plt.show()
+        if show:
+            plt.show()
     
     def addLine(self, line):
         self.lines.append(line)
