@@ -31,19 +31,19 @@ def computeGuides(station, network):
             
             for i in range(len(network.shapes)):
                 if closer[i] is None and network.stations[u % n].shape == network.shapes[i]:
-                    closer[i] = u % n
+                    closer[i] = u
             dejaVu[u] = True
             for (v, w) in G[u]:
                 
                 if - U.priority(v) > - k + w:
                     
-                    U.changePrio(v, - k + w)
+                    U.changePrio(v, k - w)
                     spanningForest[v] = u
     
     for i in range(len(network.shapes)):
         route = []
         goal = closer[i]
-        while not (goal is None or goal % n == station.idt) and len(route) < n:
+        while goal is not None and goal % n != station.idt and len(route) < n:
             route.append((goal // n, goal % n))
             goal = spanningForest[goal]
         guides.append(route)
@@ -149,24 +149,32 @@ class Network:
     
     def createGraph(self):
         G = [[] for _ in self.lines for _ in self.stations]
+        n = len(self.stations)
 
         for line in self.lines:
-            n = len(self.stations)
             for k in range(len(line.route)):
                 s = self.stations[line.route[k]]
                 d = 0
                 for l in range(1, len(line.route)):
-                    t = self.stations[line.route[(k + l) % len(line.route)]]
-                    d += self.distances[s.idt][t.idt]
-                    G[s.idt + n * line.nb].append((t.idt + n * line.nb, d))
+                    t = self.stations[line.route[(k + l - 1) % len(line.route)]]
+                    u = self.stations[line.route[(k + l) % len(line.route)]]
+                    d += self.distances[t.idt][u.idt]
+                    G[s.idt + n * line.nb].append((u.idt + n * line.nb, d))
         
         for s in self.stations:
             for line1 in s.lines:
                 for line2 in s.lines:
                     if line1 != line2:
-                        G[s.idt + n * line1].append(s.idt + n * line2, self.lines[line2].waitingTime(self))
+                        G[s.idt + n * line1].append((s.idt + n * line2, self.lines[line2].waitingTime(self)))
 
         return G
+    
+    def updateAllGuides(self):
+        for station in self.stations:
+            station.lines = [line.nb for line in self.lines if station.idt in line.route]
+        self.graph = self.createGraph()
+        for station in self.stations:
+            station.updateGuides(self)
     
     def plot(self, show=True):
 
@@ -235,7 +243,7 @@ class Line:
                 train.fill(station)
     
     def waitingTime(self, network):
-        return sum([network.distances[self.route[k]][self.route[(k + 1) % len(self.route)]] for k in range(len(self.route))]) / (2 * len(self.trains))
+        return sum([network.distances[self.route[k]][self.route[(k + 1) % len(self.route)]] for k in range(len(self.route))]) / (1 + 2 * len(self.trains))
 
 
 

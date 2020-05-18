@@ -130,6 +130,7 @@ def glutton(network, totalLines=8):
         lineNb += 1
     
     appendLast(network)
+    network.updateAllGuides()
 
 
 
