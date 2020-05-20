@@ -65,7 +65,7 @@ n.lines.append(l)
 n.graph = n.createGraph()
 
 for s in n.stations:
-    s.updateGuides(n)
+    s.updatepaths(n)
 
 n.stations[1].waiting.append(p)
 

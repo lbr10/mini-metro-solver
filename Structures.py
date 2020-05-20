@@ -5,9 +5,9 @@ from PriorityQueue import PriorityQueue
 
 
 
-def computeGuides(station, network):
+def computepaths(station, network):
 
-    guides = []
+    paths = []
         
     G = network.graph
     start = station.idt
@@ -46,9 +46,9 @@ def computeGuides(station, network):
         while goal is not None and goal % n != station.idt and len(route) < n:
             route.append((goal // n, goal % n))
             goal = spanningForest[goal]
-        guides.append(route)
+        paths.append(route)
 
-    return guides
+    return paths
 
 
 
@@ -62,7 +62,7 @@ class Passenger:
         self.route = route
     
     def computeRoute(self, station):
-        self.route = station.guides[self.shapeNb]
+        self.route = station.paths[self.shapeNb]
 
         
 
@@ -87,10 +87,10 @@ class Station:
         self.overloadTime = 0
         self.lines = lines
         self.transported = 0
-        self.guides = []
+        self.paths = []
     
-    def updateGuides(self, network):
-        self.guides = computeGuides(self, network)
+    def updatepaths(self, network):
+        self.paths = computepaths(self, network)
     
     def upCrowded(self, network):
         if self.overloadTime >= 100:
@@ -169,12 +169,12 @@ class Network:
 
         return G
     
-    def updateAllGuides(self):
+    def updateAllpaths(self):
         for station in self.stations:
             station.lines = [line.nb for line in self.lines if station.idt in line.route]
         self.graph = self.createGraph()
         for station in self.stations:
-            station.updateGuides(self)
+            station.updatepaths(self)
     
     def plot(self, show=True):
 
