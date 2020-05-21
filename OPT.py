@@ -70,7 +70,7 @@ def OPT2(network, lineNb):
 def optiOPT2(network):
     for line in network.lines:
         OPT2(network, line.nb)
-    network.updateAllGuides()
+    network.updateAllpaths()
 
 
 def OPT3(network, lineNb):
@@ -106,7 +106,7 @@ def optiOPT3(network):
     for line in network.lines:
         if line.cyclic:
             OPT3(network, line.nb)
-    network.updateAllGuides()
+    network.updateAllpaths()
 
 
 def linesServing(network, station):
@@ -153,7 +153,7 @@ def optiBlunt(network):
         for station in network.stations:
             b = b or blunt(network, station)
     
-    network.updateAllGuides()
+    network.updateAllpaths()
 
 
 def test(p, f=3):
