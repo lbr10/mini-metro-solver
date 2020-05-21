@@ -216,12 +216,11 @@ class Line:
 
     '''A Line object represents a metro line. It is defined by an unique number, the list of stations on this line (which can be cyclic) and the list of trains on this line. The direct parameter indicates if the train is following the route in the left -> right order or in the opposite order.'''
 
-    def __init__(self, nb, route, trains, cyclic=True, direct=True):
+    def __init__(self, nb, route, trains, cyclic=True):
         self.nb = nb
         self.route = route
         self.trains = trains
         self.cyclic = cyclic
-        self.direct = direct
     
     def nextState(self, dist, stations):
         for train in self.trains:
@@ -230,13 +229,13 @@ class Line:
             else:
                 station = stations[self.route[train.nextDest]]
                 if not self.cyclic and train.nextDest == len(self.route) - 1:
-                    self.direct = False
+                    train.direct = False
                 elif not self.cyclic and train.nextDest == 0:
-                    self.direct = True
-                if self.direct:
+                    train.direct = True
+                if train.direct:
                     train.nextDest = (train.nextDest + 1) % len(self.route)
                 else:
-                    train.nextDest = (train.nextDest + 1) % len(self.route)
+                    train.nextDest = (train.nextDest - 1) % len(self.route)
                 nextStation = stations[self.route[train.nextDest]]
                 train.nextTime = dist[station.idt][nextStation.idt]
                 train.empty(station)
@@ -253,12 +252,13 @@ class Train:
 
     '''A Train object represents a metro train. It is defined by the number of the line it is working on, its next destination, the time needed to go to the next destination, the list of passengers onboard and its capacity.'''
 
-    def __init__(self, line, nextDest, nextTime, passengers, capacity):
+    def __init__(self, line, nextDest, nextTime, passengers, capacity, direct=True):
         self.line = line
         self.nextDest = nextDest
         self.nextTime = nextTime
         self.passengers = passengers
         self.capacity = capacity
+        self.direct = direct
     
     def empty(self, station):
         i = 0
