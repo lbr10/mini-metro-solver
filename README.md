@@ -1,6 +1,6 @@
 # mini-metro-solver
 
-Avez-vous déjà joué au jeu Mini Metro ? Il s'agit d'un petit jeu de gestion, disponible sur mobile, PC, Switch et PS4 (https://play.google.com/store/apps/details?id=nz.co.codepoint.minimetro), où l'on doit gérer un réseau de métro en traçant judicieusement les lignes de métro et en leur attribuant un certain nombre, limité, de rames.
+Avez-vous déjà joué au jeu Mini Metro ? Il s'agit d'un petit jeu de gestion, disponible sur mobile, PC, Switch et PS4 (https://dinopoloclub.com/games/mini-metro/), où l'on doit gérer un réseau de métro en traçant judicieusement les lignes de métro et en leur attribuant un certain nombre, limité, de rames.
 
 Au fur et à mesure que le jeu avance, le nombre de passagers et de stations à desservir augmente et il devient de plus en plus difficile de tous les satisfaire. Le jeu s'arrête alors lorsqu'une station de métro est surchargée de passagers.
 
