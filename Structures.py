@@ -8,6 +8,10 @@ from PriorityQueue import PriorityQueue
 def computepaths(station, network):
 
     paths = []
+    station.durations = [float('inf') for _ in network.shapes]
+    for i in range(len(network.shapes)):
+        if network.shapes[i] == station.shape:
+            station.durations[i] = 0
         
     G = network.graph
     start = station.idt
@@ -43,6 +47,8 @@ def computepaths(station, network):
     for i in range(len(network.shapes)):
         route = []
         goal = closer[i]
+        if not goal is None:
+            station.durations[i] = - U.priority(goal)
         while goal is not None and goal % n != station.idt and len(route) < n:
             route.append((goal // n, goal % n))
             goal = spanningForest[goal]
@@ -62,7 +68,7 @@ class Passenger:
         self.route = route
     
     def computeRoute(self, station):
-        self.route = station.paths[self.shapeNb]
+        self.route = station.paths[self.shapeNb].copy()
 
         
 
@@ -88,8 +94,9 @@ class Station:
         self.lines = lines
         self.transported = 0
         self.paths = []
+        self.durations = []
     
-    def updatepaths(self, network):
+    def updatePaths(self, network):
         self.paths = computepaths(self, network)
     
     def upCrowded(self, network):
@@ -169,12 +176,12 @@ class Network:
 
         return G
     
-    def updateAllpaths(self):
+    def updateAllPaths(self):
         for station in self.stations:
             station.lines = [line.nb for line in self.lines if station.idt in line.route]
         self.graph = self.createGraph()
         for station in self.stations:
-            station.updatepaths(self)
+            station.updatePaths(self)
     
     def plot(self, show=True):
 

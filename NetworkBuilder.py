@@ -14,7 +14,7 @@ def randomRate(nbShapes, shape):
 
 
 def randomStation(idt, loc, nbShapes, spTimeRange, capacityRange, spRate=None):
-    shape = rnd.randint(0, nbShapes - 1)
+    shape = rnd.randint(0, 2)
     spTime = rnd.randint(spTimeRange[0], spTimeRange[1])
     capacity = rnd.randint(capacityRange[0], capacityRange[1])
     if spRate is None:
@@ -47,25 +47,9 @@ def randomEmptyNetwork(nbShapes, nbStations, locations=None, spTimeRanges=None, 
         station = randomStation(i, locations[i], nbShapes, spTimeRanges[i], capacityRanges[i], spRates[i])
         stations.append(station)
     distances = buildDistances(locations, dist)
+
+    for i in range(3, nbShapes):
+        stations[i - 3].shape = i
+        stations[i - 3].spRate = randomRate(nbShapes, i)
+
     return Network(stations, distances, [], [k for k in range(nbShapes)])
-
-
-
-
-p = Passenger(0, [(0, 0)])
-
-t = Train(0, 0, 0, [], 6)
-
-l = Line(0, [0,1,2,3], [t])
-
-n = randomEmptyNetwork(3, 4)
-
-n.lines.append(l)
-
-n.graph = n.createGraph()
-
-for s in n.stations:
-    s.updatepaths(n)
-
-n.stations[1].waiting.append(p)
-

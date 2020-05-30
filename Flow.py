@@ -1,5 +1,6 @@
 from Structures import *
 from scipy.spatial import Delaunay
+from NetworkBuilder import *
 
 
 def dijkstra(graph, statShapes, start, tabShapes):
@@ -157,6 +158,8 @@ def exhaustEdges(network, selectBranch):
         trains = [Train(len(network.lines), 0, 0, [], 6)]
         line = Line(len(network.lines), branch, trains, cyclic)
         network.addLine(line)
+    
+    network.updateAllPaths()
     
     return trainNumber, len(network.lines)
 
